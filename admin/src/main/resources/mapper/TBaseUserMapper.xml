@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.admin.mapper.TBaseUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.admin.entity.TBaseUser">
+            <id property="id" column="ID" jdbcType="BIGINT"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="CREATE_USER" jdbcType="VARCHAR"/>
+            <result property="status" column="STATUS" jdbcType="INTEGER"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="UPDATE_USER" jdbcType="VARCHAR"/>
+            <result property="version" column="VERSION" jdbcType="INTEGER"/>
+            <result property="address" column="ADDRESS" jdbcType="VARCHAR"/>
+            <result property="email" column="EMAIL" jdbcType="VARCHAR"/>
+            <result property="loginName" column="LOGIN_NAME" jdbcType="VARCHAR"/>
+            <result property="mobilePhone" column="MOBILE_PHONE" jdbcType="VARCHAR"/>
+            <result property="name" column="NAME" jdbcType="VARCHAR"/>
+            <result property="password" column="PASSWORD" jdbcType="VARCHAR"/>
+            <result property="sex" column="SEX" jdbcType="INTEGER"/>
+            <result property="tel" column="TEL" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.admin.dto.TBaseUserDTO">
+        <id property="id" column="uID" jdbcType="BIGINT"/>
+        <result property="createTime" column="uCT" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="uCU" jdbcType="VARCHAR"/>
+        <result property="status" column="uS" jdbcType="INTEGER"/>
+        <result property="updateTime" column="uUT" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="uUU" jdbcType="VARCHAR"/>
+        <result property="version" column="uV" jdbcType="INTEGER"/>
+        <result property="address" column="uA" jdbcType="VARCHAR"/>
+        <result property="email" column="uE" jdbcType="VARCHAR"/>
+        <result property="loginName" column="uLN" jdbcType="VARCHAR"/>
+        <result property="mobilePhone" column="uMP" jdbcType="VARCHAR"/>
+        <result property="name" column="uN" jdbcType="VARCHAR"/>
+        <result property="password" column="uP" jdbcType="VARCHAR"/>
+        <result property="sex" column="uS" jdbcType="INTEGER"/>
+        <result property="tel" column="uT" jdbcType="VARCHAR"/>
+        <collection property="tBaseRoleDTOS" ofType="com.admin.dto.TBaseRoleDTO">
+            <id property="id" column="rID" jdbcType="BIGINT"/>
+            <result property="createTime" column="rCT" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="rCU" jdbcType="VARCHAR"/>
+            <result property="status" column="rS" jdbcType="INTEGER"/>
+            <result property="updateTime" column="rUT" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="rUU" jdbcType="VARCHAR"/>
+            <result property="version" column="rV" jdbcType="INTEGER"/>
+            <result property="description" column="rD" jdbcType="VARCHAR"/>
+            <result property="name" column="rN" jdbcType="VARCHAR"/>
+
+        </collection>
+    </resultMap>
+
+
+
+    <delete id="deleteRoleByUser" parameterType="java.lang.Long" >
+        DELETE from t_base_user_role WHERE user_id=#{id}
+    </delete>
+
+
+    <select id="findUserByLoginName" parameterType="String" resultMap="BaseResultMap">
+        select * from t_base_user where login_name=#{loginName}
+    </select>
+
+
+    <select id="selectRoleByUserId1"  resultMap="BaseResultMap1" parameterType="long">
+        SELECT u.id uID,u.CREATE_TIME uCT,u.CREATE_USER uCU,u.STATUS uS,u.UPDATE_USER uUU,u.VERSION uV,
+               u.ADDRESS uA,u.EMAIL uE,u.LOGIN_NAME uLN,u.MOBILE_PHONE uMP,u.Name uN,u.PASSWORD uP,u.SEX uS,u.TEL uT,
+               r.id rID,r.CREATE_TIME rCT,r.CREATE_USER rCU,u.STATUS rS,r.UPDATE_USER rUU,r.VERSION rV,r.DESCRIPTION rD,
+               r.Name rN from t_base_user u
+                                  INNER JOIN t_base_user_role ur ON u.id=ur.USER_ID
+                                  INNER JOIN t_base_role r ON r.id = ur.ROLE_ID
+        WHERE u.id=#{id}
+    </select>
+
+    <update id="updateUser">
+        update t_base_user
+        set create_time=#{createTime},create_user=#{createUser},status=#{status},update_time=#{updateTime},
+            update_user=#{updateUser},version=#{version},address=#{address},email=#{email},login_name=#{loginName},
+            mobile_phone=#{mobilePhone},
+            name=#{name},password=#{password},sex=#{sex},tel=#{tel}
+        where id = #{id}
+    </update>
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.admin.mapper.TBaseRoleMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.admin.entity.TBaseRoleMenu">
+            <result property="roleId" column="ROLE_ID" jdbcType="BIGINT"/>
+            <result property="menuId" column="MENU_ID" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ROLE_ID,MENU_ID
+    </sql>
+    <delete id="deleteRoleMenu" parameterType="java.lang.Long" >
+        DELETE from t_base_role_menu WHERE menu_id=#{id}
+    </delete>
+
+
+</mapper>

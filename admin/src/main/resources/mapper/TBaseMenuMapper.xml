@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.admin.mapper.TBaseMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.admin.entity.TBaseMenu">
+            <id property="id" column="ID" jdbcType="BIGINT"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="CREATE_USER" jdbcType="VARCHAR"/>
+            <result property="status" column="STATUS" jdbcType="INTEGER"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="UPDATE_USER" jdbcType="VARCHAR"/>
+            <result property="version" column="VERSION" jdbcType="INTEGER"/>
+            <result property="ico" column="ICO" jdbcType="VARCHAR"/>
+            <result property="markUrl" column="MARK_URL" jdbcType="VARCHAR"/>
+            <result property="name" column="NAME" jdbcType="VARCHAR"/>
+            <result property="orderNo" column="ORDER_NO" jdbcType="INTEGER"/>
+            <result property="type" column="TYPE" jdbcType="INTEGER"/>
+            <result property="url" column="URL" jdbcType="VARCHAR"/>
+            <result property="parentId" column="PARENT_ID" jdbcType="BIGINT"/>
+            <result property="content" column="CONTENT" jdbcType="VARCHAR"/>
+            <result property="title" column="TITLE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        ID,CREATE_TIME,CREATE_USER,
+        STATUS,UPDATE_TIME,UPDATE_USER,
+        VERSION,ICO,MARK_URL,
+        NAME,ORDER_NO,TYPE,
+        URL,PARENT_ID,CONTENT,
+        TITLE
+    </sql>
+
+    <delete id="deleteMenu" parameterType="java.lang.Long" >
+        DELETE from t_base_menu WHERE id=#{id}
+    </delete>
+    <select id="findLike" resultMap="BaseResultMap" parameterType="string">
+        SELECT * FROM t_base_menu WHERE  CONCAT(name,id) regexp #{name}
+
+    </select>
+
+    <select id="findMenu" parameterType="long" resultMap="BaseResultMap">
+        select * from t_base_menu where id=#{id}
+    </select>
+
+    <select id="findMenuByName" parameterType="String" resultMap="BaseResultMap">
+        select * from t_base_menu where name=#{name}
+    </select>
+    <update id="updateMenu">
+        update t_base_menu
+        set create_time=#{createTime},status=#{status},update_time=#{updateTime},update_user=#{updateUser},version=#{version},ico=#{ico},mark_url=#{markUrl},name=#{name},order_no=#{orderNo},type=#{type},url=#{url},parent_id=#{parentId},content=#{content},title=#{title}
+
+        where id = #{id}
+    </update>
+
+    <select id="selectnotmenu" resultMap="BaseResultMap">
+        select t_base_menu.`NAME`,t_base_menu.ID from t_base_menu
+        where not exists (select 1 from `t_base_role_menu` where t_base_menu.id = t_base_role_menu.menu_id and t_base_role_menu.role_id = #{id} )
+    </select>
+
+    <select id="selectRoleMenus" resultMap="BaseResultMap">
+        select distinct m.* from t_base_menu m
+                                     left join t_base_role_menu rm on (m.id = rm.MENU_ID )
+                                     left join t_base_role r on (r.id = rm.ROLE_ID)
+        where r.id = #{id} and m.name is not null
+
+    </select>
+
+</mapper>

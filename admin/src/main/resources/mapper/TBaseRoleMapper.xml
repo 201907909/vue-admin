@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.admin.mapper.TBaseRoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.admin.entity.TBaseRole">
+            <id property="id" column="ID" jdbcType="BIGINT"/>
+            <result property="createTime" column="CREATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="CREATE_USER" jdbcType="VARCHAR"/>
+            <result property="status" column="STATUS" jdbcType="INTEGER"/>
+            <result property="updateTime" column="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="UPDATE_USER" jdbcType="VARCHAR"/>
+            <result property="version" column="VERSION" jdbcType="INTEGER"/>
+            <result property="description" column="DESCRIPTION" jdbcType="VARCHAR"/>
+            <result property="name" column="NAME" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <resultMap id="BaseResultMap1" type="com.admin.dto.TBaseRoleDTO">
+        <id property="id" column="rID" jdbcType="BIGINT"/>
+        <result property="createTime" column="rCT" jdbcType="TIMESTAMP"/>
+        <result property="createUser" column="rCU" jdbcType="VARCHAR"/>
+        <result property="status" column="rS" jdbcType="INTEGER"/>
+        <result property="updateTime" column="rUT" jdbcType="TIMESTAMP"/>
+        <result property="updateUser" column="rUU" jdbcType="VARCHAR"/>
+        <result property="version" column="rV" jdbcType="INTEGER"/>
+        <result property="description" column="rD" jdbcType="VARCHAR"/>
+        <result property="name" column="rN" jdbcType="VARCHAR"/>
+        <collection property="tBaseMenuDTOS" ofType="com.admin.dto.TBaseMenuDTO">
+            <id property="id" column="mID" jdbcType="BIGINT"/>
+            <result property="createTime" column="mCT" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="mCU" jdbcType="VARCHAR"/>
+            <result property="status" column="mS" jdbcType="INTEGER"/>
+            <result property="updateTime" column="mUT" jdbcType="TIMESTAMP"/>
+            <result property="updateUser" column="mUU" jdbcType="VARCHAR"/>
+            <result property="version" column="mv" jdbcType="INTEGER"/>
+            <result property="ico" column="mI" jdbcType="VARCHAR"/>
+            <result property="markUrl" column="mMU" jdbcType="VARCHAR"/>
+            <result property="name" column="mN" jdbcType="VARCHAR"/>
+            <result property="orderNo" column="mON" jdbcType="INTEGER"/>
+            <result property="type" column="mT" jdbcType="INTEGER"/>
+            <result property="url" column="mU" jdbcType="VARCHAR"/>
+            <result property="parentId" column="mPI" jdbcType="BIGINT"/>
+            <result property="content" column="mC" jdbcType="VARCHAR"/>
+            <result property="title" column="mT" jdbcType="VARCHAR"/>
+        </collection>
+
+    </resultMap>
+
+        <select id="selectnotrole" resultMap="BaseResultMap">
+                select t_base_role.`NAME`,t_base_role.ID from t_base_role
+                where not exists (select 1 from `t_base_user_role` where t_base_role.id = t_base_user_role.role_id and t_base_user_role.user_id = #{id} )
+        </select>
+
+    <delete id="deleteRoleByUserRole" parameterType="java.lang.Long" >
+        DELETE from t_base_user_role WHERE role_id=#{id}
+    </delete>
+
+    <delete id="deleteRoleByRoleMenu" parameterType="java.lang.Long" >
+        DELETE from t_base_role_menu WHERE role_id=#{id}
+    </delete>
+
+    <select id="findMenuByName" parameterType="String" resultMap="BaseResultMap">
+        select * from t_base_role where name=#{name}
+    </select>
+
+
+    <select id="findRoleByName" parameterType="String" resultMap="BaseResultMap">
+        select * from t_base_role where name=#{name}
+    </select>
+
+    <update id="updateRole">
+        update t_base_role
+        set create_time=#{createTime},create_user=#{createUser},status=#{status},update_time=#{updateTime},
+            update_user=#{updateUser},version=#{version},description=#{description},name=#{name}
+
+        where id = #{id}
+    </update>
+
+    <select id="selectMenuByRoleId1"  resultMap="BaseResultMap1" parameterType="long">
+        SELECT
+            r.id rID,r.CREATE_TIME rCT,r.CREATE_USER rCU,r.UPDATE_USER rUU,r.VERSION rV,r.DESCRIPTION rD,
+            r.Name rN,m.id mID,m.CREATE_TIME mCT,m.CREATE_USER mCU,m.UPDATE_USER mUU,m.UPDATE_TIME m,m.VERSION mV,m.ICO mI,m.MARK_URL mMU,m.NAME mN,m.ORDER_NO mON,
+            m.TYPE mT,m.URL mU,m.PARENT_ID mPI,m.CONTENT mC,m.TITLE mT
+        from t_base_role r
+                 INNER JOIN t_base_role_menu rm ON r.id=rm.ROLE_ID
+                 INNER JOIN t_base_menu m ON m.id = rm.MENU_ID
+        WHERE R.id=#{id}
+    </select>
+
+
+    <select id="selectUserRoles" resultMap="BaseResultMap">
+        select distinct r.ID,r.name from t_base_role r
+                                             left join t_base_user_role ur on (r.id = ur.role_id)
+                                             left join t_base_user u on (u.id = ur.user_id)
+        where u.id = #{id} and r.name is not null
+    </select>
+
+
+
+</mapper>
